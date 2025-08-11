@@ -5,20 +5,18 @@ using UnityEngine;
 
 public class Slot : MonoBehaviour
 {
+    [SerializeField] private Sprite[] sprites;
+    private SpriteRenderer spriteRenderer;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        GameManager.instance.OnPlay += Event_OnPlay;
     }
 
-    private void Event_OnPlay(object obj, EventArgs e)
+    private void Event_OnPlay(object sender, EventArgs e)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        spriteRenderer.sprite = sprites[GameManager.instance.nums[transform.GetSiblingIndex()]];
     }
 }
