@@ -12,7 +12,8 @@ public class GameManager : MonoBehaviour
 
     public int[] nums;
 
-    [SerializeField] public int coins;
+    public int coins = 300;
+    public bool isRolling = false;
 
     private enum Symbol
     {
@@ -23,6 +24,21 @@ public class GameManager : MonoBehaviour
         bar,
         seven
     }
+
+    private enum SlotPosition
+    {
+        topLeft,
+        topMiddle,
+        topRight,
+        left,
+        middle,
+        right,
+        bottomLeft,
+        bottomMiddle,
+        bottomRight
+    }
+
+    public int scrollSpeed = 20;
 
     // Start is called before the first frame update
     void Awake()
@@ -42,16 +58,17 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        nums = new int[3];
+        nums = new int[transform.childCount];
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && !isRolling)
         {
             if (coins >= 3)
             {
+                isRolling = true;
                 coins -= 3;
                 GetRandomNumbers();
                 OnPlay?.Invoke(this, EventArgs.Empty);
@@ -68,19 +85,18 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < nums.Length; i++)
         {
             nums[i] = UnityEngine.Random.Range(0, 6);
+            // Debug.Log("nums" + i + ": " + nums[i]);
         }
-
-        // Debug.Log("num1: " + nums[0] + " num2: " + nums[1] + " num3: " + nums[2]);
-        CheckResult(nums[0], nums[1], nums[2]);
     }
 
-    private void CheckResult(int num1, int num2, int num3)
+    public void CheckResult()
     {
         // Three in a row
-        if (num1 == num2 && num1 == num3)
+        if (nums[(int)SlotPosition.left] == nums[(int)SlotPosition.middle]
+                && nums[(int)SlotPosition.left] == nums[(int)SlotPosition.right])
         {
             // Debug.Log("Jackpot!");
-            switch (num1)
+            switch (nums[(int)SlotPosition.left])
             {
                 case (int)Symbol.cherry:
                     coins += 6;

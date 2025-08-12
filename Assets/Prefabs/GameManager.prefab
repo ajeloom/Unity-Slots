@@ -44,3 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd8b41a45212052479da4b15c8d941cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nums: 
+  coins: 300
+  isRolling: 0
+  scrollSpeed: 20
