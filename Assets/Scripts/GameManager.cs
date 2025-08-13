@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
         seven
     }
 
-    private enum SlotPosition
+    public enum SlotPosition
     {
         topLeft,
         topMiddle,
@@ -35,10 +35,22 @@ public class GameManager : MonoBehaviour
         right,
         bottomLeft,
         bottomMiddle,
-        bottomRight
+        bottomRight,
+        outerLeft,
+        outerMiddle,
+        outerRight
     }
 
     public int scrollSpeed = 20;
+
+    private enum GameType
+    {
+        oneCoin = 1,
+        twoCoin = 2,
+        threeCoin = 3
+    }
+
+    private GameType gameType = GameType.oneCoin;
 
     // Start is called before the first frame update
     void Awake()
@@ -62,21 +74,44 @@ public class GameManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    // void Update()
+    // {
+
+    // }
+
+    public void PlayOneCoin()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !isRolling)
+        if (coins >= 1 && !isRolling)
         {
-            if (coins >= 3)
-            {
-                isRolling = true;
-                coins -= 3;
-                GetRandomNumbers();
-                OnPlay?.Invoke(this, EventArgs.Empty);
-            }
-            else
-            {
-                Debug.Log("Not enough coins");
-            }
+            isRolling = true;
+            gameType = GameType.oneCoin;
+            coins -= 1;
+            GetRandomNumbers();
+            OnPlay?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public void PlayTwoCoins()
+    {
+        if (coins >= 2 && !isRolling)
+        {
+            isRolling = true;
+            gameType = GameType.twoCoin;
+            coins -= 2;
+            GetRandomNumbers();
+            OnPlay?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public void PlayThreeCoins()
+    {
+        if (coins >= 3 && !isRolling)
+        {
+            isRolling = true;
+            gameType = GameType.threeCoin;
+            coins -= 3;
+            GetRandomNumbers();
+            OnPlay?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -91,30 +126,55 @@ public class GameManager : MonoBehaviour
 
     public void CheckResult()
     {
-        // Three in a row
-        if (nums[(int)SlotPosition.left] == nums[(int)SlotPosition.middle]
-                && nums[(int)SlotPosition.left] == nums[(int)SlotPosition.right])
+        if (gameType == GameType.oneCoin)
         {
-            // Debug.Log("Jackpot!");
-            switch (nums[(int)SlotPosition.left])
+            // Check if the middle has three matching
+            CheckThreeMatching(nums[(int)SlotPosition.left], nums[(int)SlotPosition.middle], nums[(int)SlotPosition.right], (int)GameType.oneCoin);
+        }
+        else if (gameType == GameType.twoCoin)
+        {
+            // Check if each row has three matching
+            CheckThreeMatching(nums[(int)SlotPosition.topLeft], nums[(int)SlotPosition.topMiddle], nums[(int)SlotPosition.topRight], (int)GameType.twoCoin);
+            CheckThreeMatching(nums[(int)SlotPosition.left], nums[(int)SlotPosition.middle], nums[(int)SlotPosition.right], (int)GameType.oneCoin);
+            CheckThreeMatching(nums[(int)SlotPosition.bottomLeft], nums[(int)SlotPosition.bottomMiddle], nums[(int)SlotPosition.bottomRight], (int)GameType.twoCoin);
+        }
+        else if (gameType == GameType.threeCoin)
+        {
+            // Check if each row has three matching
+            CheckThreeMatching(nums[(int)SlotPosition.topLeft], nums[(int)SlotPosition.topMiddle], nums[(int)SlotPosition.topRight], (int)GameType.twoCoin);
+            CheckThreeMatching(nums[(int)SlotPosition.left], nums[(int)SlotPosition.middle], nums[(int)SlotPosition.right], (int)GameType.oneCoin);
+            CheckThreeMatching(nums[(int)SlotPosition.bottomLeft], nums[(int)SlotPosition.bottomMiddle], nums[(int)SlotPosition.bottomRight], (int)GameType.twoCoin);
+
+            // Check if the two diagonals has three matching
+            CheckThreeMatching(nums[(int)SlotPosition.topLeft], nums[(int)SlotPosition.middle], nums[(int)SlotPosition.bottomRight], (int)GameType.threeCoin);
+            CheckThreeMatching(nums[(int)SlotPosition.bottomLeft], nums[(int)SlotPosition.middle], nums[(int)SlotPosition.topRight], (int)GameType.threeCoin);
+        }
+    }
+
+    private void CheckThreeMatching(int num1, int num2, int num3, int multiplier)
+    {
+        if (num1 == num2
+                && num1 == num3)
+        {
+            switch (num1)
             {
                 case (int)Symbol.cherry:
-                    coins += 6;
+                    coins += 3 * multiplier;
                     break;
                 case (int)Symbol.watermelon:
-                    coins += 12;
+                    coins += 6 * multiplier;
                     break;
                 case (int)Symbol.diamond:
-                    coins += 25;
+                    coins += 12 * multiplier;
                     break;
                 case (int)Symbol.star:
-                    coins += 50;
+                    coins += 25 * multiplier;
                     break;
                 case (int)Symbol.bar:
-                    coins += 100;
+                    coins += 50 * multiplier;
                     break;
                 case (int)Symbol.seven:
-                    coins += 300;
+                    coins += 100 * multiplier;
                     break;
             }
 

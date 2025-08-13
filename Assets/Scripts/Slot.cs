@@ -26,24 +26,24 @@ public class Slot : MonoBehaviour
 
     private IEnumerator SpinAnimation()
     {
-        if (transform.GetSiblingIndex() == 0
-                || transform.GetSiblingIndex() == 3
-                || transform.GetSiblingIndex() == 6
-                || transform.GetSiblingIndex() == 9)
+        if (transform.GetSiblingIndex() == (int)GameManager.SlotPosition.topLeft
+                || transform.GetSiblingIndex() == (int)GameManager.SlotPosition.left
+                || transform.GetSiblingIndex() == (int)GameManager.SlotPosition.bottomLeft
+                || transform.GetSiblingIndex() == (int)GameManager.SlotPosition.outerLeft)
         {
             yield return new WaitForSecondsRealtime(0.0f);
         }
-        else if (transform.GetSiblingIndex() == 1
-                || transform.GetSiblingIndex() == 4
-                || transform.GetSiblingIndex() == 7
-                || transform.GetSiblingIndex() == 10)
+        else if (transform.GetSiblingIndex() == (int)GameManager.SlotPosition.topMiddle
+                || transform.GetSiblingIndex() == (int)GameManager.SlotPosition.middle
+                || transform.GetSiblingIndex() == (int)GameManager.SlotPosition.bottomMiddle
+                || transform.GetSiblingIndex() == (int)GameManager.SlotPosition.outerMiddle)
         {
             yield return new WaitForSecondsRealtime(0.5f);
         }
-        else if (transform.GetSiblingIndex() == 2
-                || transform.GetSiblingIndex() == 5
-                || transform.GetSiblingIndex() == 8
-                || transform.GetSiblingIndex() == 11)
+        else if (transform.GetSiblingIndex() == (int)GameManager.SlotPosition.topRight
+                || transform.GetSiblingIndex() == (int)GameManager.SlotPosition.right
+                || transform.GetSiblingIndex() == (int)GameManager.SlotPosition.bottomRight
+                || transform.GetSiblingIndex() == (int)GameManager.SlotPosition.outerRight)
         {
             yield return new WaitForSecondsRealtime(1.0f);
         }

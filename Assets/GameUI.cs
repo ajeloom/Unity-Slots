@@ -24,6 +24,9 @@ public class GameUI : MonoBehaviour
 
     private void Event_OnJackpot(object sender, EventArgs e)
     {
+        // Update coin counter
+        tmp.text = "Coins: " + GameManager.instance.coins.ToString();
+        
         transform.Find("JackpotText").gameObject.SetActive(true);
         StartCoroutine(FadeOut());
     }
