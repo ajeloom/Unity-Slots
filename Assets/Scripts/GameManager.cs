@@ -73,12 +73,6 @@ public class GameManager : MonoBehaviour
         nums = new int[transform.childCount];
     }
 
-    // Update is called once per frame
-    // void Update()
-    // {
-
-    // }
-
     public void PlayOneCoin()
     {
         if (coins >= 1 && !isRolling)
@@ -86,6 +80,7 @@ public class GameManager : MonoBehaviour
             isRolling = true;
             gameType = GameType.oneCoin;
             coins -= 1;
+            HideMatchingLines();
             GetRandomNumbers();
             OnPlay?.Invoke(this, EventArgs.Empty);
         }
@@ -98,6 +93,7 @@ public class GameManager : MonoBehaviour
             isRolling = true;
             gameType = GameType.twoCoin;
             coins -= 2;
+            HideMatchingLines();
             GetRandomNumbers();
             OnPlay?.Invoke(this, EventArgs.Empty);
         }
@@ -110,6 +106,7 @@ public class GameManager : MonoBehaviour
             isRolling = true;
             gameType = GameType.threeCoin;
             coins -= 3;
+            HideMatchingLines();
             GetRandomNumbers();
             OnPlay?.Invoke(this, EventArgs.Empty);
         }
@@ -126,35 +123,53 @@ public class GameManager : MonoBehaviour
 
     public void CheckResult()
     {
+        bool isMiddleMatching = CheckThreeMatching(nums[(int)SlotPosition.left], nums[(int)SlotPosition.middle], nums[(int)SlotPosition.right], (int)GameType.oneCoin);
+
+        if (isMiddleMatching)
+        {
+            transform.Find("Line_Middle").gameObject.SetActive(true);
+        }
+
         if (gameType == GameType.oneCoin)
         {
-            // Check if the middle has three matching
-            CheckThreeMatching(nums[(int)SlotPosition.left], nums[(int)SlotPosition.middle], nums[(int)SlotPosition.right], (int)GameType.oneCoin);
+            return;
         }
-        else if (gameType == GameType.twoCoin)
-        {
-            // Check if each row has three matching
-            CheckThreeMatching(nums[(int)SlotPosition.topLeft], nums[(int)SlotPosition.topMiddle], nums[(int)SlotPosition.topRight], (int)GameType.twoCoin);
-            CheckThreeMatching(nums[(int)SlotPosition.left], nums[(int)SlotPosition.middle], nums[(int)SlotPosition.right], (int)GameType.oneCoin);
-            CheckThreeMatching(nums[(int)SlotPosition.bottomLeft], nums[(int)SlotPosition.bottomMiddle], nums[(int)SlotPosition.bottomRight], (int)GameType.twoCoin);
-        }
-        else if (gameType == GameType.threeCoin)
-        {
-            // Check if each row has three matching
-            CheckThreeMatching(nums[(int)SlotPosition.topLeft], nums[(int)SlotPosition.topMiddle], nums[(int)SlotPosition.topRight], (int)GameType.twoCoin);
-            CheckThreeMatching(nums[(int)SlotPosition.left], nums[(int)SlotPosition.middle], nums[(int)SlotPosition.right], (int)GameType.oneCoin);
-            CheckThreeMatching(nums[(int)SlotPosition.bottomLeft], nums[(int)SlotPosition.bottomMiddle], nums[(int)SlotPosition.bottomRight], (int)GameType.twoCoin);
 
-            // Check if the two diagonals has three matching
-            CheckThreeMatching(nums[(int)SlotPosition.topLeft], nums[(int)SlotPosition.middle], nums[(int)SlotPosition.bottomRight], (int)GameType.threeCoin);
-            CheckThreeMatching(nums[(int)SlotPosition.bottomLeft], nums[(int)SlotPosition.middle], nums[(int)SlotPosition.topRight], (int)GameType.threeCoin);
+        bool isTopMatching = CheckThreeMatching(nums[(int)SlotPosition.topLeft], nums[(int)SlotPosition.topMiddle], nums[(int)SlotPosition.topRight], (int)GameType.twoCoin);
+        bool isBottomMatching = CheckThreeMatching(nums[(int)SlotPosition.bottomLeft], nums[(int)SlotPosition.bottomMiddle], nums[(int)SlotPosition.bottomRight], (int)GameType.twoCoin);
+
+        if (isTopMatching)
+        {
+            transform.Find("Line_Top").gameObject.SetActive(true);
+        }
+
+        if (isBottomMatching)
+        {
+            transform.Find("Line_Bottom").gameObject.SetActive(true);
+        }
+
+        if (gameType == GameType.twoCoin)
+        {
+            return;
+        }
+
+        bool isDiagonalMatching = CheckThreeMatching(nums[(int)SlotPosition.topLeft], nums[(int)SlotPosition.middle], nums[(int)SlotPosition.bottomRight], (int)GameType.threeCoin);
+        bool isDiagonalMatching2 = CheckThreeMatching(nums[(int)SlotPosition.bottomLeft], nums[(int)SlotPosition.middle], nums[(int)SlotPosition.topRight], (int)GameType.threeCoin);
+
+        if (isDiagonalMatching)
+        {
+            transform.Find("Line_Diagonal1").gameObject.SetActive(true);
+        }
+
+        if (isDiagonalMatching2)
+        {
+            transform.Find("Line_Diagonal2").gameObject.SetActive(true);
         }
     }
 
-    private void CheckThreeMatching(int num1, int num2, int num3, int multiplier)
+    private bool CheckThreeMatching(int num1, int num2, int num3, int multiplier)
     {
-        if (num1 == num2
-                && num1 == num3)
+        if (num1 == num2 && num1 == num3)
         {
             switch (num1)
             {
@@ -179,6 +194,18 @@ public class GameManager : MonoBehaviour
             }
 
             OnJackpot?.Invoke(this, EventArgs.Empty);
+            return true;
         }
+
+        return false;
+    }
+
+    private void HideMatchingLines()
+    {
+        transform.Find("Line_Middle").gameObject.SetActive(false);
+        transform.Find("Line_Top").gameObject.SetActive(false);
+        transform.Find("Line_Bottom").gameObject.SetActive(false);
+        transform.Find("Line_Diagonal1").gameObject.SetActive(false);
+        transform.Find("Line_Diagonal2").gameObject.SetActive(false);
     }
 }
