@@ -12,35 +12,40 @@ public class GameUI : MonoBehaviour
     void Start()
     {
         tmp = transform.Find("CoinsText").GetComponent<TextMeshProUGUI>();
-        tmp.text = "Coins: " + GameManager.instance.coins.ToString();
+        tmp.text = GameManager.instance.coins.ToString();
         GameManager.instance.OnPlay += Event_OnPlay;
         GameManager.instance.OnJackpot += Event_OnJackpot;
     }
 
     private void Event_OnPlay(object sender, EventArgs e)
     {
-        tmp.text = "Coins: " + GameManager.instance.coins.ToString();
+        tmp.text = GameManager.instance.coins.ToString();
+        transform.Find("Jackpot").gameObject.SetActive(false);
+        StopAllCoroutines();
     }
 
     private void Event_OnJackpot(object sender, EventArgs e)
     {
         // Update coin counter
-        tmp.text = "Coins: " + GameManager.instance.coins.ToString();
-        
-        transform.Find("JackpotText").gameObject.SetActive(true);
-        StartCoroutine(FadeOut());
+        tmp.text = GameManager.instance.coins.ToString();
+
+        transform.Find("Jackpot").gameObject.SetActive(true);
+        StartCoroutine(Blink());
     }
 
-    private IEnumerator FadeOut()
+    private IEnumerator Blink()
     {
-        TextMeshProUGUI text = transform.Find("JackpotText").GetComponent<TextMeshProUGUI>();
+        GameObject obj = transform.Find("Jackpot").gameObject;
 
-        for (float i = 1; i > 0; i -= Time.deltaTime / 2)
+        while (true)
         {
-            text.color = new Color(text.color.r, text.color.g, text.color.b, i);
-            yield return null;
+            obj.SetActive(true);
+
+            yield return new WaitForSecondsRealtime(0.5f);
+
+            obj.SetActive(false);
+
+            yield return new WaitForSecondsRealtime(0.5f);
         }
-        
-        transform.Find("JackpotText").gameObject.SetActive(false);
     }
 }

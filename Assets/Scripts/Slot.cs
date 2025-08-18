@@ -51,12 +51,12 @@ public class Slot : MonoBehaviour
         while (loop < 10)
         {
             Vector3 temp = transform.position;
-            for (float i = temp.y; i > -5.0f; i -= Time.deltaTime * GameManager.instance.scrollSpeed)
+            for (float i = temp.y; i > -4.0f; i -= Time.deltaTime * GameManager.instance.scrollSpeed)
             {
                 transform.position = new Vector3(transform.position.x, i, transform.position.z);
                 yield return null;
             }
-            transform.position = new Vector3(transform.position.x, 5.0f, transform.position.z);
+            transform.position = new Vector3(transform.position.x, 4.0f, transform.position.z);
             spriteRenderer.sprite = sprites[UnityEngine.Random.Range(0, 6)];
             loop++;
         }
